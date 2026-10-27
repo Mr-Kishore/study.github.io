@@ -1,0 +1,500 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Data Structures Checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: a single scrollable column of module cards, each a Notion-style
+     toggle group of checkbox rows; a sticky header tracks overall progress. */
+  :root{
+    --bg:#f6f5f2;
+    --surface:#ffffff;
+    --border:#e4e1da;
+    --fg:#20201d;
+    --muted:#716d63;
+    --accent:#3a5bdc;
+    --accent-weak:#e8ecfb;
+    --done:#2f8f5b;
+    --done-weak:#e4f3ea;
+    --radius:10px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17181c;
+      --surface:#1f2025;
+      --border:#302f35;
+      --fg:#ebe9e4;
+      --muted:#938e83;
+      --accent:#7d93ff;
+      --accent-weak:#262b45;
+      --done:#5fc98a;
+      --done-weak:#1c3129;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17181c;
+    --surface:#1f2025;
+    --border:#302f35;
+    --fg:#ebe9e4;
+    --muted:#938e83;
+    --accent:#7d93ff;
+    --accent-weak:#262b45;
+    --done:#5fc98a;
+    --done-weak:#1c3129;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    font-size:15px;
+    line-height:1.5;
+    padding-left:max(16px, env(safe-area-inset-left, 0px));
+    padding-right:max(16px, env(safe-area-inset-right, 0px));
+  }
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;}
+
+  .wrap{max-width:760px;margin:0 auto;padding-block:28px 72px;}
+
+  header.top{
+    position:sticky;
+    top:env(safe-area-inset-top, 0px);
+    z-index:10;
+    background:var(--bg);
+    padding-block:16px 14px;
+    margin-bottom:18px;
+    border-bottom:1px solid var(--border);
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0 0 auto;
+    height:env(safe-area-inset-top, 0px);
+    z-index:10;
+    background:var(--bg);
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 4px;
+  }
+  h1{
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 14px;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  .overall{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .overall-track{
+    flex:1;
+    min-width:0;
+    height:8px;
+    border-radius:999px;
+    background:var(--border);
+    overflow:hidden;
+  }
+  .overall-fill{
+    height:100%;
+    background:var(--accent);
+    border-radius:999px;
+    transition:width .25s ease;
+    width:0%;
+  }
+  .overall-count{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    white-space:nowrap;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .toolbar{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    font:inherit;
+    font-size:12.5px;
+    font-weight:500;
+    color:var(--muted);
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:7px;
+    padding:6px 10px;
+    cursor:pointer;
+  }
+  .btn:hover{color:var(--fg);border-color:var(--muted);}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  .module{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .module-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    text-align:left;
+    padding:14px 16px;
+    background:none;
+    border:none;
+    font:inherit;
+    color:inherit;
+    cursor:pointer;
+  }
+  .module-head:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+  .chevron{
+    flex:none;
+    width:16px;height:16px;
+    color:var(--muted);
+    transition:transform .18s ease;
+  }
+  .module.collapsed .chevron{transform:rotate(-90deg);}
+  .module-title-wrap{flex:1;min-width:0;}
+  .module-label{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:10.5px;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin:0 0 2px;
+  }
+  .module-title{
+    font-size:15.5px;
+    font-weight:600;
+    margin:0;
+  }
+  .module-progress{
+    flex:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .module-track{
+    width:64px;
+    height:5px;
+    border-radius:999px;
+    background:var(--border);
+    overflow:hidden;
+  }
+  .module-fill{
+    height:100%;
+    background:var(--accent);
+    border-radius:999px;
+    transition:width .2s ease;
+  }
+  .module-frac{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:11.5px;
+    color:var(--muted);
+    width:34px;
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .module-body{
+    border-top:1px solid var(--border);
+  }
+  .module.collapsed .module-body{display:none;}
+
+  .group{
+    padding:10px 16px 12px;
+  }
+  .group + .group{
+    border-top:1px dashed var(--border);
+  }
+  .group-title{
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+    margin:6px 0 2px;
+  }
+
+  label.row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:7px 2px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  label.row:hover{background:var(--accent-weak);}
+
+  input.chk{
+    appearance:none;
+    -webkit-appearance:none;
+    flex:none;
+    width:17px;height:17px;
+    margin-top:1.5px;
+    border:1.5px solid var(--muted);
+    border-radius:5px;
+    background:var(--surface);
+    cursor:pointer;
+    position:relative;
+    transition:background .12s ease, border-color .12s ease;
+  }
+  input.chk:checked{
+    background:var(--done);
+    border-color:var(--done);
+  }
+  input.chk:checked::after{
+    content:"";
+    position:absolute;
+    left:4.5px;top:1.5px;
+    width:5px;height:9px;
+    border:solid white;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+  }
+  input.chk:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  .row-text{font-size:14px;}
+  .row span.item-done{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border);}
+
+  footer{
+    margin-top:22px;
+    font-size:12px;
+    color:var(--muted);
+    text-align:center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Selected Data Structures · Study tracker</p>
+    <h1>Course checklist</h1>
+    <div class="overall">
+      <div class="overall-track"><div class="overall-fill" id="overallFill"></div></div>
+      <div class="overall-count mono" id="overallCount">0 / 0</div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="expandAll">Expand all</button>
+      <button class="btn" id="collapseAll">Collapse all</button>
+      <button class="btn" id="resetAll">Clear progress</button>
+    </div>
+  </header>
+
+  <main id="modules"></main>
+
+  <footer>Checked items are saved in this browser only.</footer>
+</div>
+
+<script>
+(function(){
+  var DATA = [
+    {
+      title: "Binary Tree, AVL, Splay, B-Tree",
+      groups: [
+        { name: "Binary Tree", items: ["Insertion", "Deletion", "Searching"] },
+        { name: "AVL Tree", items: ["Insertion & Deletion", "Rotations", "Searching"] },
+        { name: "Splay Tree", items: ["Splay Tree"] },
+        { name: "B-Tree & B+ Tree", items: ["B-Tree & B+ Tree"] }
+      ]
+    },
+    {
+      title: "Hashing",
+      groups: [
+        { name: null, items: ["Hash Table & Hash Functions", "Collision Resolution", "Cuckoo Hashing", "Bloom Filters"] }
+      ]
+    },
+    {
+      title: "Graphs",
+      groups: [
+        { name: null, items: [
+          "Graph",
+          "Breadth-First Search (BFS) & Depth-First Search (DFS)",
+          "Minimum Spanning Trees & Kruskal's Algorithm",
+          "Shortest Path Algorithms (Dijkstra's Algorithm & Floyd-Warshall Algorithm)"
+        ] }
+      ]
+    },
+    {
+      title: "Tries & String Structures",
+      groups: [
+        { name: null, items: ["Trie and Types of Trie", "Suffix Arrays", "String Indexing Structures", "Segment Trees"] }
+      ]
+    },
+    {
+      title: "Advanced & Spatial Structures",
+      groups: [
+        { name: null, items: ["Skip Lists", "Persistent Data Structures", "KD-Trees", "Spatial and Concurrent Data Structures"] }
+      ]
+    }
+  ];
+
+  var STORAGE_KEY = "dsa-checklist-v1";
+  var state = {};
+  try {
+    state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch(e) { state = {}; }
+
+  var collapseState = {};
+  try {
+    collapseState = JSON.parse(localStorage.getItem(STORAGE_KEY + "-collapse") || "{}");
+  } catch(e) { collapseState = {}; }
+
+  function save(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+  function saveCollapse(){
+    try { localStorage.setItem(STORAGE_KEY + "-collapse", JSON.stringify(collapseState)); } catch(e){}
+  }
+
+  var root = document.getElementById("modules");
+  var allCheckboxes = [];
+  var moduleEls = [];
+
+  DATA.forEach(function(mod, mi){
+    var modEl = document.createElement("section");
+    modEl.className = "module";
+    if (collapseState[mi]) modEl.classList.add("collapsed");
+
+    var head = document.createElement("button");
+    head.className = "module-head";
+    head.type = "button";
+    head.setAttribute("aria-expanded", collapseState[mi] ? "false" : "true");
+    head.innerHTML =
+      '<svg class="chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+      '<path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '<span class="module-title-wrap">' +
+        '<p class="module-label">Module ' + (mi+1) + '</p>' +
+        '<p class="module-title"></p>' +
+      '</span>' +
+      '<span class="module-progress">' +
+        '<span class="module-track"><span class="module-fill"></span></span>' +
+        '<span class="module-frac mono"></span>' +
+      '</span>';
+    head.querySelector(".module-title").textContent = mod.title;
+    modEl.appendChild(head);
+
+    var body = document.createElement("div");
+    body.className = "module-body";
+
+    mod.groups.forEach(function(g, gi){
+      var groupEl = document.createElement("div");
+      groupEl.className = "group";
+      if (g.name){
+        var gt = document.createElement("p");
+        gt.className = "group-title";
+        gt.textContent = g.name;
+        groupEl.appendChild(gt);
+      }
+      g.items.forEach(function(item, ii){
+        var id = "m" + mi + "-g" + gi + "-i" + ii;
+        var label = document.createElement("label");
+        label.className = "row";
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.className = "chk";
+        cb.id = id;
+        cb.checked = !!state[id];
+        var textSpan = document.createElement("span");
+        textSpan.className = "row-text" + (cb.checked ? "" : "");
+        var inner = document.createElement("span");
+        inner.textContent = item;
+        if (cb.checked) inner.className = "item-done";
+        textSpan.appendChild(inner);
+        label.appendChild(cb);
+        label.appendChild(textSpan);
+        groupEl.appendChild(label);
+
+        cb.addEventListener("change", function(){
+          state[id] = cb.checked;
+          inner.className = cb.checked ? "item-done" : "";
+          save();
+          updateModuleProgress(mi);
+          updateOverall();
+        });
+
+        allCheckboxes.push({ id: id, mi: mi });
+      });
+      body.appendChild(groupEl);
+    });
+
+    modEl.appendChild(body);
+    root.appendChild(modEl);
+    moduleEls.push({ el: modEl, head: head, fill: head.querySelector(".module-fill"), frac: head.querySelector(".module-frac"), items: mod.groups.reduce(function(n,g){return n+g.items.length;},0) });
+
+    head.addEventListener("click", function(){
+      var collapsed = modEl.classList.toggle("collapsed");
+      head.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      collapseState[mi] = collapsed;
+      saveCollapse();
+    });
+  });
+
+  function updateModuleProgress(mi){
+    var m = moduleEls[mi];
+    var done = 0;
+    allCheckboxes.filter(function(c){return c.mi===mi;}).forEach(function(c){
+      if (state[c.id]) done++;
+    });
+    var pct = m.items ? (done / m.items * 100) : 0;
+    m.fill.style.width = pct + "%";
+    m.frac.textContent = done + "/" + m.items;
+  }
+
+  function updateOverall(){
+    var total = allCheckboxes.length;
+    var done = allCheckboxes.filter(function(c){return state[c.id];}).length;
+    document.getElementById("overallFill").style.width = (total ? done/total*100 : 0) + "%";
+    document.getElementById("overallCount").textContent = done + " / " + total;
+  }
+
+  moduleEls.forEach(function(_, mi){ updateModuleProgress(mi); });
+  updateOverall();
+
+  document.getElementById("expandAll").addEventListener("click", function(){
+    moduleEls.forEach(function(m, mi){
+      m.el.classList.remove("collapsed");
+      m.head.setAttribute("aria-expanded","true");
+      collapseState[mi] = false;
+    });
+    saveCollapse();
+  });
+  document.getElementById("collapseAll").addEventListener("click", function(){
+    moduleEls.forEach(function(m, mi){
+      m.el.classList.add("collapsed");
+      m.head.setAttribute("aria-expanded","false");
+      collapseState[mi] = true;
+    });
+    saveCollapse();
+  });
+  document.getElementById("resetAll").addEventListener("click", function(){
+    state = {};
+    save();
+    allCheckboxes.forEach(function(c){
+      var cb = document.getElementById(c.id);
+      cb.checked = false;
+      var inner = cb.nextSibling.firstChild;
+      inner.className = "";
+    });
+    moduleEls.forEach(function(_, mi){ updateModuleProgress(mi); });
+    updateOverall();
+  });
+})();
+</script>
+
+</body></html>
